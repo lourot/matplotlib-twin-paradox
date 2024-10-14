@@ -1,18 +1,20 @@
+import colorsys
 from typing import Any, Final
 
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgb
 import numpy as np
 
 
 def _main() -> None:
     _fig, (axes_earth, axes_traveler) = plt.subplots(
-        1, 2, sharey=True, figsize=(6, 8), layout="constrained", facecolor="lightgray"
+        1, 2, sharey=True, figsize=(10, 8), layout="constrained", facecolor="lightgray"
     )
 
     x_planet: Final[float] = 10.0
     traveler_speed: Final[float] = 0.5
-    x_max: Final[float] = x_planet
-    t_max: Final[float] = 2 * x_max / traveler_speed
+    x_max: Final[float] = x_planet * 2.0
+    t_max: Final[float] = 2 * x_planet / traveler_speed
 
     margin: Final[float] = 0.5
 
@@ -21,11 +23,11 @@ def _main() -> None:
 
     earth_line_x: Final[Any] = np.linspace(0, 0)
     earth_line_t: Final[Any] = np.linspace(0, t_max)
-    traveler_x_first_leg: Final[Any] = np.linspace(0, x_max)
+    traveler_x_first_leg: Final[Any] = np.linspace(0, x_planet)
     traveler_t_first_leg: Final[Any] = traveler_x_first_leg / traveler_speed
-    traveler_x_second_leg: Final[Any] = np.linspace(x_max, 0)
+    traveler_x_second_leg: Final[Any] = np.linspace(x_planet, 0)
     traveler_t_second_leg: Final[Any] = (
-        t_max / 2 + (x_max - traveler_x_second_leg) / traveler_speed
+        t_max / 2 + (x_planet - traveler_x_second_leg) / traveler_speed
     )
 
     color_traveler: Final[str] = "orange"
@@ -33,9 +35,13 @@ def _main() -> None:
     _draw_line(axes_earth, traveler_x_first_leg, traveler_t_first_leg, color_traveler)
     _draw_line(axes_earth, traveler_x_second_leg, traveler_t_second_leg, color_traveler)
 
-    _draw_marker(axes_earth, x_planet, x_planet / traveler_speed, "red")
+    _draw_marker(
+        axes_earth, x_planet, x_planet / traveler_speed, _darken(color_traveler)
+    )
 
-    _draw_arrow(axes_earth, 0, 0, x_planet, x_planet * traveler_speed, color_traveler)
+    _draw_axis(
+        axes_earth, "x'", 0, 0, x_max, x_max * traveler_speed, _darken(color_traveler)
+    )
 
     plt.show()
 
@@ -106,7 +112,7 @@ def _draw_marker(axes, x, y, color, label: str | None = None, margin=0.0) -> Non
         )
 
 
-def _draw_arrow(axes, x_start, y_start, x_end, y_end, color) -> None:
+def _draw_axis(axes, label, x_start, y_start, x_end, y_end, color) -> None:
     # See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.arrow.html
     axes.arrow(
         x_start,
@@ -118,6 +124,21 @@ def _draw_arrow(axes, x_start, y_start, x_end, y_end, color) -> None:
         color=color,
         linestyle=":",
     )
+
+    axes.annotate(
+        label,
+        xy=(x_end, y_end),
+        textcoords="offset fontsize",
+        xytext=(-0.5, 0.5),
+        color=color,
+    )
+
+
+def _darken(color: str):
+    # See https://stackoverflow.com/questions/37765197/darken-or-lighten-a-color-in-matplotlib
+    h, l, s = colorsys.rgb_to_hls(*to_rgb(color))
+    scale_l: Final[float] = 0.8
+    return colorsys.hls_to_rgb(h, min(1, l * scale_l), s=s)
 
 
 if __name__ == "__main__":
