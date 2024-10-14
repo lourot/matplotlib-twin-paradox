@@ -9,21 +9,24 @@ def _main() -> None:
         1, 2, sharey=True, figsize=(5, 8), layout="tight"
     )
     _plot(axes_earth, "Earth")
-    _plot(axes_traveler, "Traveler", "x'", "t'", 1, ":")
+    _plot(axes_traveler, "Traveler", "x'", "t'", linewidth=1, linestyle=":")
     plt.show()
 
 
-def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> None:
-    x_max: Final[int] = 1
-    t_max: Final[int] = 4
+def _plot(
+    axes, title, xname="x", yname="t", xunit="ly", yunit="y", linewidth=2, linestyle="-"
+) -> None:
+    x_max: Final[float] = 10.0
+    speed: Final[float] = 0.5
+    t_max: Final[float] = 2 * x_max / speed
 
     earth_x: Final[Any] = np.linspace(0, 0)
     earth_t: Final[Any] = np.linspace(0, t_max)
     traveler_x_first_leg: Final[Any] = np.linspace(0, x_max)
-    traveler_t_first_leg: Final[Any] = t_max / 2 * traveler_x_first_leg
+    traveler_t_first_leg: Final[Any] = traveler_x_first_leg / speed
     traveler_x_second_leg: Final[Any] = np.linspace(x_max, 0)
-    traveler_t_second_leg: Final[Any] = t_max / 2 + t_max / 2 * (
-        x_max - traveler_x_second_leg
+    traveler_t_second_leg: Final[Any] = (
+        t_max / 2 + (x_max - traveler_x_second_leg) / speed
     )
     markers_x: Final[Any] = [
         x_max,
@@ -35,6 +38,8 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
     axes.set_title(title)
     label_color: Final[str] = "green"
     label_fontsize: Final[int] = 14
+    xlabel: Final[str] = f"{xname} [{xunit}]"
+    ylabel: Final[str] = f"{yname} [{yunit}]"
     axes.set_xlabel(xlabel, color=label_color, fontsize=label_fontsize)
     axes.set_ylabel(ylabel, color=label_color, fontsize=label_fontsize)
 
@@ -71,7 +76,7 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
     )  # s=square
     axes.annotate(
         planet_label,
-        xy=(markers_x[0] - 0.02, markers_t[0] + 0.05),
+        xy=(markers_x[0] - 0.15, markers_t[0] + 0.5),
         textcoords="offset fontsize",
         xytext=(-4, 5.2),
         color=planet_color,
@@ -88,7 +93,7 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
 
     axes.set_xlim(0, x_max)
     axes.set_ylim(0, t_max)
-    tick_granularity: Final[float] = 0.5
+    tick_granularity: Final[float] = 2.0
     axes.set_xticks(np.arange(0, x_max + tick_granularity, tick_granularity))
     axes.set_yticks(np.arange(0, t_max + tick_granularity, tick_granularity))
 
