@@ -6,7 +6,7 @@ import numpy as np
 
 def _main() -> None:
     _fig, (axes_earth, axes_traveler) = plt.subplots(
-        1, 2, sharey=True, figsize=(5, 8), layout="tight"
+        1, 2, sharey=True, figsize=(5, 8), layout="tight", facecolor="lightgray"
     )
     _plot(axes_earth, "Earth")
     _plot(axes_traveler, "Traveler", "x'", "t'", linewidth=1, linestyle=":")
@@ -96,6 +96,8 @@ def _plot(
     tick_granularity: Final[float] = 2.0
     axes.set_xticks(np.arange(0, x_max + tick_granularity, tick_granularity))
     axes.set_yticks(np.arange(0, t_max + tick_granularity, tick_granularity))
+    # axes.minorticks_on()
+    axes.set_aspect("equal")  # aspect ratio of 1:1
 
     axes.grid()
     # axes.legend()
