@@ -5,7 +5,7 @@ import numpy as np
 
 
 def _main() -> None:
-    fig, (axes_earth, axes_traveler) = plt.subplots(1, 2, figsize=(8, 8))
+    fig, (axes_earth, axes_traveler) = plt.subplots(1, 2, sharey=True, figsize=(8, 8))
     _plot(axes_earth, "Earth")
     _plot(axes_traveler, "Traveler", 1, ":")
     plt.show()
@@ -55,6 +55,9 @@ def _plot(axes, title, linewidth=2, linestyle="-") -> None:
         linestyle=linestyle,
     )
     axes.plot(markers_x, markers_y, "s", label="Other planet", color="red")  # s=square
+
+    axes.set_xlim(0, 1)
+    axes.set_ylim(0, 4)
 
     axes.grid()
     # axes.legend()
