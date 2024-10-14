@@ -42,6 +42,15 @@ def _main() -> None:
     _draw_axis(
         axes_earth, "x'", 0, 0, x_max, x_max * traveler_speed, _darken(color_traveler)
     )
+    _draw_axis(
+        axes_earth,
+        "t'",
+        0,
+        0,
+        x_planet * 1.2,
+        x_planet / traveler_speed * 1.2,
+        _darken(color_traveler),
+    )
 
     plt.show()
 
@@ -76,7 +85,6 @@ def _draw_axes(
 
 
 def _draw_line(axes, data_x, data_y, color) -> None:
-
     legwidth: Final[int] = 2
     legstyle: Final[str] = "-"
     axes.plot(
