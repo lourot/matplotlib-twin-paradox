@@ -93,6 +93,18 @@ def _plot(
         ),
     )
 
+    # See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.arrow.html
+    axes.arrow(
+        0,
+        0,
+        10,
+        5,
+        length_includes_head=True,
+        head_width=0.5,
+        color="orange",
+        linestyle=":",
+    )
+
     axes.set_xlim(-margin, x_max + margin)
     axes.set_ylim(-margin, t_max + margin)
     tick_granularity: Final[float] = 2.0
