@@ -8,33 +8,41 @@ def _main() -> None:
     _fig, (axes_earth, axes_traveler) = plt.subplots(
         1, 2, sharey=True, figsize=(6, 8), layout="constrained", facecolor="lightgray"
     )
-    _plot(axes_earth, "Earth")
-    _plot(axes_traveler, "Traveler", "x'", "t'", linewidth=1, linestyle=":")
+
+    x_planet: Final[float] = 10.0
+    traveler_speed: Final[float] = 0.5
+    x_max: Final[float] = x_planet
+    t_max: Final[float] = 2 * x_max / traveler_speed
+
+    margin: Final[float] = 0.5
+
+    _draw_axes(axes_earth, "Earth", x_max, t_max, margin)
+    _draw_axes(axes_traveler, "Traveler", x_max, t_max, margin, "x'", "t'")
+
+    earth_line_x: Final[Any] = np.linspace(0, 0)
+    earth_line_t: Final[Any] = np.linspace(0, t_max)
+    traveler_x_first_leg: Final[Any] = np.linspace(0, x_max)
+    traveler_t_first_leg: Final[Any] = traveler_x_first_leg / traveler_speed
+    traveler_x_second_leg: Final[Any] = np.linspace(x_max, 0)
+    traveler_t_second_leg: Final[Any] = (
+        t_max / 2 + (x_max - traveler_x_second_leg) / traveler_speed
+    )
+
+    color_traveler: Final[str] = "orange"
+    _draw_line(axes_earth, earth_line_x, earth_line_t, "blue")
+    _draw_line(axes_earth, traveler_x_first_leg, traveler_t_first_leg, color_traveler)
+    _draw_line(axes_earth, traveler_x_second_leg, traveler_t_second_leg, color_traveler)
+
+    _draw_marker(axes_earth, x_planet, x_planet / traveler_speed, "red")
+
+    _draw_arrow(axes_earth, 0, 0, x_planet, x_planet * traveler_speed, color_traveler)
+
     plt.show()
 
 
-def _plot(
-    axes, title, xname="x", yname="t", xunit="ly", yunit="y", linewidth=2, linestyle="-"
+def _draw_axes(
+    axes, title, xmax, ymax, margin, xname="x", yname="t", xunit="ly", yunit="y"
 ) -> None:
-    x_max: Final[float] = 10.0
-    speed: Final[float] = 0.5
-    t_max: Final[float] = 2 * x_max / speed
-
-    earth_x: Final[Any] = np.linspace(0, 0)
-    earth_t: Final[Any] = np.linspace(0, t_max)
-    traveler_x_first_leg: Final[Any] = np.linspace(0, x_max)
-    traveler_t_first_leg: Final[Any] = traveler_x_first_leg / speed
-    traveler_x_second_leg: Final[Any] = np.linspace(x_max, 0)
-    traveler_t_second_leg: Final[Any] = (
-        t_max / 2 + (x_max - traveler_x_second_leg) / speed
-    )
-    markers_x: Final[Any] = [
-        x_max,
-    ]
-    markers_t: Final[Any] = [
-        t_max / 2,
-    ]
-
     axes.set_title(title)
     label_color: Final[str] = "green"
     label_fontsize: Final[int] = 14
@@ -43,84 +51,73 @@ def _plot(
     axes.set_xlabel(xlabel, color=label_color, fontsize=label_fontsize)
     axes.set_ylabel(ylabel, color=label_color, fontsize=label_fontsize)
 
-    axes.plot(
-        earth_x,
-        earth_t,
-        label="Earth",
-        color="blue",
-        linewidth=linewidth,
-        linestyle=linestyle,
-    )
-    axes.plot(
-        traveler_x_first_leg,
-        traveler_t_first_leg,
-        label="First leg",
-        color="orange",
-        linewidth=linewidth,
-        linestyle=linestyle,
-    )
-    axes.plot(
-        traveler_x_second_leg,
-        traveler_t_second_leg,
-        label="Second leg",
-        color="orange",
-        linewidth=linewidth,
-        linestyle=linestyle,
-    )
-
-    margin: Final[float] = 0.5
-
-    planet_label: Final[str] = "Planet"
-    planet_color: Final[str] = "red"
-    arrow_head_size: Final[int] = 7
-    axes.plot(
-        markers_x, markers_t, "s", label=planet_label, color=planet_color
-    )  # s=square
-    axes.annotate(
-        planet_label,
-        xy=(markers_x[0], markers_t[0] + margin),
-        textcoords="offset fontsize",
-        xytext=(-4, 5.2),
-        color=planet_color,
-        arrowprops=dict(
-            # arrowstyle="fancy",
-            # relpos=(10, -10),
-            color=planet_color,
-            width=1,
-            headwidth=arrow_head_size,
-            headlength=arrow_head_size,
-            # shrink=0.5,
-        ),
-    )
-
-    # See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.arrow.html
-    axes.arrow(
-        0,
-        0,
-        10,
-        5,
-        length_includes_head=True,
-        head_width=0.5,
-        color="orange",
-        linestyle=":",
-    )
-
-    axes.set_xlim(-margin, x_max + margin)
-    axes.set_ylim(-margin, t_max + margin)
+    axes.set_xlim(-margin, xmax + margin)
+    axes.set_ylim(-margin, ymax + margin)
     tick_granularity: Final[float] = 2.0
     minor_tick_granularity: Final[float] = 1.0
-    axes.set_xticks(np.arange(0, x_max + tick_granularity, tick_granularity))
-    axes.set_yticks(np.arange(0, t_max + tick_granularity, tick_granularity))
+    axes.set_xticks(np.arange(0, xmax + tick_granularity, tick_granularity))
+    axes.set_yticks(np.arange(0, ymax + tick_granularity, tick_granularity))
     axes.set_xticks(
-        np.arange(0, x_max + minor_tick_granularity, minor_tick_granularity), minor=True
+        np.arange(0, xmax + minor_tick_granularity, minor_tick_granularity), minor=True
     )
     axes.set_yticks(
-        np.arange(0, t_max + minor_tick_granularity, minor_tick_granularity), minor=True
+        np.arange(0, ymax + minor_tick_granularity, minor_tick_granularity), minor=True
     )
     axes.set_aspect("equal")  # aspect ratio of 1:1
 
     axes.grid()
     # axes.legend()
+
+
+def _draw_line(axes, data_x, data_y, color) -> None:
+
+    legwidth: Final[int] = 2
+    legstyle: Final[str] = "-"
+    axes.plot(
+        data_x,
+        data_y,
+        # label="Earth",
+        color=color,
+        linewidth=legwidth,
+        linestyle=legstyle,
+    )
+
+
+def _draw_marker(axes, x, y, color, label: str | None = None, margin=0.0) -> None:
+    arrow_head_size: Final[int] = 7
+    axes.plot([x], [y], "s", label=label, color=color)  # s=square
+
+    if label is not None:
+        axes.annotate(
+            label,
+            xy=(x, y + margin),
+            textcoords="offset fontsize",
+            xytext=(-4, 5.2),
+            color=color,
+            arrowprops=dict(
+                # arrowstyle="fancy",
+                # relpos=(10, -10),
+                color=color,
+                width=1,
+                headwidth=arrow_head_size,
+                headlength=arrow_head_size,
+                # shrink=0.5,
+            ),
+        )
+
+
+def _draw_arrow(axes, x_start, y_start, x_end, y_end, color) -> None:
+    # See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.arrow.html
+    axes.arrow(
+        x_start,
+        y_start,
+        x_end,
+        y_end,
+        length_includes_head=True,
+        head_width=0.5,
+        color=color,
+        linestyle=":",
+    )
 
 
 if __name__ == "__main__":
