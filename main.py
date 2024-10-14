@@ -7,11 +7,11 @@ import numpy as np
 def _main() -> None:
     fig, (axes_earth, axes_traveler) = plt.subplots(1, 2, sharey=True, figsize=(8, 8))
     _plot(axes_earth, "Earth")
-    _plot(axes_traveler, "Traveler", 1, ":")
+    _plot(axes_traveler, "Traveler", "x'", "t'", 1, ":")
     plt.show()
 
 
-def _plot(axes, title, linewidth=2, linestyle="-") -> None:
+def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> None:
     earth_x: Final[Any] = np.linspace(0, 0)
     earth_y: Final[Any] = np.linspace(0, 4)
     traveler_x_first_leg: Final[Any] = np.linspace(0, 1)
@@ -28,8 +28,8 @@ def _plot(axes, title, linewidth=2, linestyle="-") -> None:
     axes.set_title(title)
     label_color: Final[str] = "green"
     label_fontsize: Final[int] = 14
-    axes.set_xlabel("x", color=label_color, fontsize=label_fontsize)
-    axes.set_ylabel("t", color=label_color, fontsize=label_fontsize)
+    axes.set_xlabel(xlabel, color=label_color, fontsize=label_fontsize)
+    axes.set_ylabel(ylabel, color=label_color, fontsize=label_fontsize)
     axes.plot(
         earth_x,
         earth_y,
