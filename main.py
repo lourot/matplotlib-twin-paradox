@@ -5,24 +5,31 @@ import numpy as np
 
 
 def _main() -> None:
-    fig, (axes_earth, axes_traveler) = plt.subplots(1, 2, sharey=True, figsize=(8, 8))
+    _fig, (axes_earth, axes_traveler) = plt.subplots(
+        1, 2, sharey=True, figsize=(5, 8), layout="tight"
+    )
     _plot(axes_earth, "Earth")
     _plot(axes_traveler, "Traveler", "x'", "t'", 1, ":")
     plt.show()
 
 
 def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> None:
+    x_max: Final[int] = 1
+    t_max: Final[int] = 4
+
     earth_x: Final[Any] = np.linspace(0, 0)
-    earth_y: Final[Any] = np.linspace(0, 4)
-    traveler_x_first_leg: Final[Any] = np.linspace(0, 1)
-    traveler_y_first_leg: Final[Any] = 2 * traveler_x_first_leg
-    traveler_x_second_leg: Final[Any] = np.linspace(1, 0)
-    traveler_y_second_leg: Final[Any] = 2 + 2 * (1 - traveler_x_second_leg)
+    earth_t: Final[Any] = np.linspace(0, t_max)
+    traveler_x_first_leg: Final[Any] = np.linspace(0, x_max)
+    traveler_t_first_leg: Final[Any] = t_max / 2 * traveler_x_first_leg
+    traveler_x_second_leg: Final[Any] = np.linspace(x_max, 0)
+    traveler_t_second_leg: Final[Any] = t_max / 2 + t_max / 2 * (
+        x_max - traveler_x_second_leg
+    )
     markers_x: Final[Any] = [
-        1,
+        x_max,
     ]
-    markers_y: Final[Any] = [
-        2,
+    markers_t: Final[Any] = [
+        t_max / 2,
     ]
 
     axes.set_title(title)
@@ -33,7 +40,7 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
 
     axes.plot(
         earth_x,
-        earth_y,
+        earth_t,
         label="Earth",
         color="blue",
         linewidth=linewidth,
@@ -41,7 +48,7 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
     )
     axes.plot(
         traveler_x_first_leg,
-        traveler_y_first_leg,
+        traveler_t_first_leg,
         label="First leg",
         color="orange",
         linewidth=linewidth,
@@ -49,7 +56,7 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
     )
     axes.plot(
         traveler_x_second_leg,
-        traveler_y_second_leg,
+        traveler_t_second_leg,
         label="Second leg",
         color="orange",
         linewidth=linewidth,
@@ -60,11 +67,11 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
     planet_color: Final[str] = "red"
     arrow_head_size: Final[int] = 7
     axes.plot(
-        markers_x, markers_y, "s", label=planet_label, color=planet_color
+        markers_x, markers_t, "s", label=planet_label, color=planet_color
     )  # s=square
     axes.annotate(
         planet_label,
-        xy=(markers_x[0] - 0.01, markers_y[0] + 0.05),
+        xy=(markers_x[0] - 0.02, markers_t[0] + 0.05),
         textcoords="offset fontsize",
         xytext=(-4, 5.2),
         color=planet_color,
@@ -79,8 +86,11 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
         ),
     )
 
-    axes.set_xlim(0, 1)
-    axes.set_ylim(0, 4)
+    axes.set_xlim(0, x_max)
+    axes.set_ylim(0, t_max)
+    tick_granularity: Final[float] = 0.5
+    axes.set_xticks(np.arange(0, x_max + tick_granularity, tick_granularity))
+    axes.set_yticks(np.arange(0, t_max + tick_granularity, tick_granularity))
 
     axes.grid()
     # axes.legend()
