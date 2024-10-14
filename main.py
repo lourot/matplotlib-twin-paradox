@@ -1,9 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-x = np.linspace(0, 2 * np.pi, 200)
-y = np.sin(x)
+def _main():
+    x = np.linspace(0, 1)
+    y = 2 * x
 
-fig, ax = plt.subplots()
-ax.plot(x, y)
-plt.show()
+    fig, ax = plt.subplots()
+    ax.set_title("Time diagram - Earth")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.plot(x, y)
+    plt.show()
+
+
+if __name__ == "__main__":
+    _main()
