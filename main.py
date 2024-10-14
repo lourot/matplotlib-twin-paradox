@@ -57,12 +57,26 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
     )
 
     planet_label: Final[str] = "Planet"
-    axes.plot(markers_x, markers_y, "s", label=planet_label, color="red")  # s=square
+    planet_color: Final[str] = "red"
+    arrow_head_size: Final[int] = 7
+    axes.plot(
+        markers_x, markers_y, "s", label=planet_label, color=planet_color
+    )  # s=square
     axes.annotate(
         planet_label,
-        xy=(markers_x[0], markers_y[0]),
-        textcoords="offset points",
-        xytext=(-35, 5),
+        xy=(markers_x[0] - 0.01, markers_y[0] + 0.05),
+        textcoords="offset fontsize",
+        xytext=(-4, 5.2),
+        color=planet_color,
+        arrowprops=dict(
+            # arrowstyle="fancy",
+            # relpos=(10, -10),
+            color=planet_color,
+            width=1,
+            headwidth=arrow_head_size,
+            headlength=arrow_head_size,
+            # shrink=0.5,
+        ),
     )
 
     axes.set_xlim(0, 1)
