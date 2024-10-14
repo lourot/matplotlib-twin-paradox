@@ -6,7 +6,7 @@ import numpy as np
 
 def _main() -> None:
     _fig, (axes_earth, axes_traveler) = plt.subplots(
-        1, 2, sharey=True, figsize=(5, 8), layout="tight", facecolor="lightgray"
+        1, 2, sharey=True, figsize=(6, 8), layout="constrained", facecolor="lightgray"
     )
     _plot(axes_earth, "Earth")
     _plot(axes_traveler, "Traveler", "x'", "t'", linewidth=1, linestyle=":")
@@ -68,6 +68,8 @@ def _plot(
         linestyle=linestyle,
     )
 
+    margin: Final[float] = 0.5
+
     planet_label: Final[str] = "Planet"
     planet_color: Final[str] = "red"
     arrow_head_size: Final[int] = 7
@@ -76,7 +78,7 @@ def _plot(
     )  # s=square
     axes.annotate(
         planet_label,
-        xy=(markers_x[0] - 0.15, markers_t[0] + 0.5),
+        xy=(markers_x[0], markers_t[0] + margin),
         textcoords="offset fontsize",
         xytext=(-4, 5.2),
         color=planet_color,
@@ -91,12 +93,18 @@ def _plot(
         ),
     )
 
-    axes.set_xlim(0, x_max)
-    axes.set_ylim(0, t_max)
+    axes.set_xlim(-margin, x_max + margin)
+    axes.set_ylim(-margin, t_max + margin)
     tick_granularity: Final[float] = 2.0
+    minor_tick_granularity: Final[float] = 1.0
     axes.set_xticks(np.arange(0, x_max + tick_granularity, tick_granularity))
     axes.set_yticks(np.arange(0, t_max + tick_granularity, tick_granularity))
-    # axes.minorticks_on()
+    axes.set_xticks(
+        np.arange(0, x_max + minor_tick_granularity, minor_tick_granularity), minor=True
+    )
+    axes.set_yticks(
+        np.arange(0, t_max + minor_tick_granularity, minor_tick_granularity), minor=True
+    )
     axes.set_aspect("equal")  # aspect ratio of 1:1
 
     axes.grid()
