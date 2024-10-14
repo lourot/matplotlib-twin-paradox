@@ -30,6 +30,7 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
     label_fontsize: Final[int] = 14
     axes.set_xlabel(xlabel, color=label_color, fontsize=label_fontsize)
     axes.set_ylabel(ylabel, color=label_color, fontsize=label_fontsize)
+
     axes.plot(
         earth_x,
         earth_y,
@@ -54,7 +55,15 @@ def _plot(axes, title, xlabel="x", ylabel="t", linewidth=2, linestyle="-") -> No
         linewidth=linewidth,
         linestyle=linestyle,
     )
-    axes.plot(markers_x, markers_y, "s", label="Other planet", color="red")  # s=square
+
+    planet_label: Final[str] = "Planet"
+    axes.plot(markers_x, markers_y, "s", label=planet_label, color="red")  # s=square
+    axes.annotate(
+        planet_label,
+        xy=(markers_x[0], markers_y[0]),
+        textcoords="offset points",
+        xytext=(-35, 5),
+    )
 
     axes.set_xlim(0, 1)
     axes.set_ylim(0, 4)
