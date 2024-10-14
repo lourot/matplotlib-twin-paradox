@@ -16,6 +16,12 @@ def _plot(axes, title, linewidth=2, linestyle="-"):
     traveler_y_first_leg = 2 * traveler_x_first_leg
     traveler_x_second_leg = np.linspace(1, 0)
     traveler_y_second_leg = 2 + 2 * (1 - traveler_x_second_leg)
+    markers_x = [
+        1,
+    ]
+    markers_y = [
+        2,
+    ]
 
     axes.set_title(title)
     axes.set_xlabel("x")
@@ -44,6 +50,7 @@ def _plot(axes, title, linewidth=2, linestyle="-"):
         linewidth=linewidth,
         linestyle=linestyle,
     )
+    axes.plot(markers_x, markers_y, "s", label="Other planet", color="red")  # s=square
     # axes.legend()
 
 
