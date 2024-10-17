@@ -3,6 +3,7 @@ from typing import Any, Final
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
 
+from src import maths
 from src import plotting
 
 
@@ -60,6 +61,16 @@ def _main() -> None:
         x_planet * 1.2,
         x_planet / traveler_speed * 1.2,
         plotting.darken(color_traveler),
+    )
+
+    ten_year_traveler_bday_x, ten_year_traveler_bday_t = (
+        maths.lorentz_transform_prime_to_reference(0, 10, traveler_speed)
+    )
+    plotting.draw_marker(
+        axes_earth,
+        ten_year_traveler_bday_x,
+        ten_year_traveler_bday_t,
+        "red",
     )
 
     plt.show()
