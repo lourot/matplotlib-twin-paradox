@@ -78,6 +78,13 @@ def _main() -> None:
         t_planet * 1.2,
         plotting.darken(color_traveler),
     )
+    _draw_light_ray(
+        axes_earth,
+        0,
+        0,
+        x_max * 1.2,
+        x_max * 1.2,
+    )
 
     _, traveler_age_on_planet = maths.lorentz_transform_reference_to_prime(
         x_planet,
@@ -119,6 +126,7 @@ def _draw_traveler_age(
     )
     simultaneous_x_on_earth: Final[float] = 0.0
     simultaneous_t_on_earth: Final[float] = traveler_age_t - traveler_age_x * speed
+
     plotting.draw_line(
         axes,
         [traveler_age_x, simultaneous_x_on_earth],
@@ -149,6 +157,31 @@ def _draw_traveler_age(
             simultaneous_t_on_earth,
             marker_earth_color,
         )
+
+    _draw_light_ray(
+        axes,
+        traveler_age_x,
+        traveler_age_t,
+        0,
+        traveler_age_t + traveler_age_x,
+    )
+
+
+def _draw_light_ray(
+    axes: Axes,
+    x_start: float,
+    t_start: float,
+    x_end: float,
+    t_end: float,
+) -> None:
+    plotting.draw_line(
+        axes,
+        [x_start, x_end],
+        [t_start, t_end],
+        "green",
+        1,
+        ":",
+    )
 
 
 if __name__ == "__main__":
