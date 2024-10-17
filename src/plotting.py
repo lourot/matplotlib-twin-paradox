@@ -8,6 +8,7 @@ import numpy as np
 
 
 def draw_figure(
+    xmin: float,
     xmax: float,
     ymax: float,
     title1: str,
@@ -22,8 +23,8 @@ def draw_figure(
         1, 2, sharey=True, figsize=(15, 12), layout="constrained", facecolor="lightgray"
     )
 
-    _draw_axes(axes1, title1, xmax, ymax, margin, xname1, yname1)
-    _draw_axes(axes2, title2, xmax, ymax, margin, xname2, yname2)
+    _draw_axes(axes1, title1, xmin, xmax, ymax, margin, xname1, yname1)
+    _draw_axes(axes2, title2, xmin, xmax, ymax, margin, xname2, yname2)
 
     return axes1, axes2
 
@@ -36,12 +37,20 @@ def draw_line(axes, data_x, data_y, color, width, style) -> None:
         color=color,
         linewidth=width,
         linestyle=style,
+        zorder=20,
     )
 
 
 def draw_marker(axes, x, y, color, label: str | None = None, margin=0.0) -> None:
     arrow_head_size: Final[int] = 7
-    axes.plot([x], [y], "s", label=label, color=color)  # s=square
+    axes.plot(
+        [x],
+        [y],
+        "s",  # square
+        label=label,
+        color=color,
+        zorder=30,
+    )
 
     if label is not None:
         axes.annotate(
@@ -73,6 +82,7 @@ def draw_axis(axes, label, x_start, y_start, x_end, y_end, color) -> None:
         head_width=0.5,
         color=color,
         linestyle=":",
+        zorder=10,
     )
 
     axes.annotate(
@@ -92,7 +102,7 @@ def darken(color: str):
 
 
 def _draw_axes(
-    axes, title, xmax, ymax, margin, xname="x", yname="t", xunit="ly", yunit="y"
+    axes, title, xmin, xmax, ymax, margin, xname="x", yname="t", xunit="ly", yunit="y"
 ) -> None:
     axes.set_title(title)
     label_color: Final[str] = "black"
@@ -102,11 +112,11 @@ def _draw_axes(
     axes.set_xlabel(xlabel, color=label_color, fontsize=label_fontsize)
     axes.set_ylabel(ylabel, color=label_color, fontsize=label_fontsize)
 
-    axes.set_xlim(-margin, xmax + margin)
+    axes.set_xlim(xmin - margin, xmax + margin)
     axes.set_ylim(-margin, ymax + margin)
     tick_granularity: Final[float] = 2.0
     minor_tick_granularity: Final[float] = 1.0
-    axes.set_xticks(np.arange(0, xmax + tick_granularity, tick_granularity))
+    axes.set_xticks(np.arange(xmin, xmax + tick_granularity, tick_granularity))
     axes.set_yticks(np.arange(0, ymax + tick_granularity, tick_granularity))
     axes.set_xticks(
         np.arange(0, xmax + minor_tick_granularity, minor_tick_granularity), minor=True

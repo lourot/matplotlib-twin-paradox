@@ -12,25 +12,35 @@ from src import plotting
 def _main() -> None:
     x_planet: Final[float] = 10.0
     traveler_speed: Final[float] = 0.5
-    t_planet = x_planet / traveler_speed
+    t_planet: Final[float] = x_planet / traveler_speed
+    t_reunion: Final[float] = 2 * t_planet
     x_max: Final[float] = x_planet * 2.0
-    t_max: Final[float] = 2 * t_planet
+    t_max: Final[float] = t_reunion + 4.0
 
-    margin: Final[float] = 0.5
+    x_min: Final[float] = -2.0
+    margin: Final[float] = 1.5
 
     axes_earth, _ = plotting.draw_figure(
-        x_max, t_max, "Earth frame", "Traveler frame", margin, "x", "t", "x'", "t'/t''"
+        x_min,
+        x_max,
+        t_max,
+        "Earth frame",
+        "Traveler frame",
+        margin,
+        "x",
+        "t",
+        "x'",
+        "t'/t''",
     )
 
-    earth_line_x: Final[Any] = np.linspace(0, 0)
-    earth_line_t: Final[Any] = np.linspace(0, t_max)
     color_earth: Final[str] = "#0088ff"
     leg_width: Final[int] = 2
     leg_style: Final[str] = "-"
-    plotting.draw_line(
+    _draw_earth_explanation(
         axes_earth,
-        earth_line_x,
-        earth_line_t,
+        x_max,
+        t_max,
+        t_reunion,
         color_earth,
         leg_width,
         leg_style,
@@ -60,6 +70,46 @@ def _main() -> None:
     )
 
     plt.show()
+
+
+def _draw_earth_explanation(
+    axes: Axes,
+    x_max: float,
+    t_max: float,
+    t_reunion: float,
+    color: Any,
+    leg_width: int,
+    leg_style: str,
+) -> None:
+    earth_line_x: Final[Any] = np.linspace(0, 0)
+    earth_line_t: Final[Any] = np.linspace(0, t_reunion)
+    plotting.draw_line(
+        axes,
+        earth_line_x,
+        earth_line_t,
+        color,
+        leg_width,
+        leg_style,
+    )
+
+    plotting.draw_axis(
+        axes,
+        "x",
+        0,
+        0,
+        x_max,
+        0,
+        plotting.darken(color),
+    )
+    plotting.draw_axis(
+        axes,
+        "t",
+        0,
+        0,
+        0,
+        t_max,
+        plotting.darken(color),
+    )
 
 
 def _draw_first_leg_explanation(
@@ -210,11 +260,11 @@ def _draw_traveler_age(
         angle_rad: Final[float] = asin(sin_angle)
         angle_deg: Final[float] = angle_rad * 180 / np.pi
         cos_angle: Final[float] = cos(angle_rad)
-        margin_text: Final[float] = 4 * margin
+        margin_text: Final[float] = margin
         axes.text(
             traveler_age_x + cos_angle * margin_text,
             traveler_age_t + sin_angle * margin_text,
-            "simultaneity in traveler's frame",
+            "traveler's simultaneity",
             color=color,
             rotation=angle_deg,
         )
