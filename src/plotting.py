@@ -20,7 +20,12 @@ def draw_figure(
     yname2: str,
 ) -> tuple[Axes, Axes]:
     _fig, (axes1, axes2) = plt.subplots(
-        1, 2, sharey=True, figsize=(15, 12), layout="constrained", facecolor="lightgray"
+        1,
+        2,
+        # sharey=True,
+        figsize=(15, 12),
+        layout="constrained",
+        facecolor="lightgray",
     )
 
     _draw_axes(axes1, title1, xmin, xmax, ymax, margin, xname1, yname1)

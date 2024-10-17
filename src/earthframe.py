@@ -19,10 +19,12 @@ def draw(
     traveler_speed: float,
     age_step: int,
     margin: float,
+    color_traveler_first_leg: Any,
+    color_traveler_second_leg: Any,
     color_earth: Any,
     leg_width: int,
     leg_style: str,
-) -> None:
+) -> float:
     _draw_earth_explanation(
         axes,
         x_max,
@@ -33,7 +35,7 @@ def draw(
         leg_style,
     )
 
-    _draw_first_leg_explanation(
+    traveler_age_on_planet: Final[float] = _draw_first_leg_explanation(
         axes,
         x_max,
         margin,
@@ -41,6 +43,7 @@ def draw(
         t_planet,
         traveler_speed,
         age_step,
+        color_traveler_first_leg,
         color_earth,
         leg_width,
         leg_style,
@@ -53,10 +56,13 @@ def draw(
         t_planet,
         traveler_speed,
         age_step,
+        color_traveler_second_leg,
         color_earth,
         leg_width,
         leg_style,
     )
+
+    return 2.0 * traveler_age_on_planet
 
 
 def _draw_earth_explanation(
@@ -107,13 +113,13 @@ def _draw_first_leg_explanation(
     t_planet: float,
     traveler_speed: float,
     age_step: int,
+    color_traveler: Any,
     color_earth: Any,
     leg_width: int,
     leg_style: str,
-) -> None:
+) -> float:
     traveler_x_first_leg: Final[Any] = np.linspace(0, x_planet)
     traveler_t_first_leg: Final[Any] = traveler_x_first_leg / traveler_speed
-    color_traveler: Final[str] = "orange"
     plotting.draw_line(
         axes,
         traveler_x_first_leg,
@@ -191,6 +197,8 @@ def _draw_first_leg_explanation(
         plotting.darken(color_earth),
     )
 
+    return traveler_age_on_planet
+
 
 def _draw_second_leg_explanation(
     axes: Axes,
@@ -199,6 +207,7 @@ def _draw_second_leg_explanation(
     t_planet: float,
     traveler_speed: float,
     age_step: int,
+    color_traveler: Any,
     color_earth: Any,
     leg_width: int,
     leg_style: str,
@@ -207,7 +216,6 @@ def _draw_second_leg_explanation(
     traveler_t_second_leg: Final[Any] = (
         t_planet + (x_planet - traveler_x_second_leg) / traveler_speed
     )
-    color_traveler: Final[str] = "#aa00aa"
     plotting.draw_line(
         axes,
         traveler_x_second_leg,

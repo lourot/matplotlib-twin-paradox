@@ -3,6 +3,7 @@ from typing import Final
 import matplotlib.pyplot as plt  # type: ignore
 
 from src import earthframe
+from src import travelerframe
 from src import plotting
 
 
@@ -17,12 +18,12 @@ def _main() -> None:
     x_min: Final[float] = -2.0
     margin: Final[float] = 1.5
 
-    axes_earth, _ = plotting.draw_figure(
+    axes_earth, axes_traveler = plotting.draw_figure(
         x_min,
         x_max,
         t_max,
         "Earth frame",
-        "Traveler's frame",
+        "Traveler's frames",
         margin,
         "x",
         "t",
@@ -31,10 +32,13 @@ def _main() -> None:
     )
 
     color_earth: Final[str] = "#0088ff"
+    color_traveler_first_leg: Final[str] = "orange"
+    color_traveler_second_leg: Final[str] = "#aa00aa"
     leg_width: Final[int] = 2
     leg_style: Final[str] = "-"
     age_step: Final[int] = 2
-    earthframe.draw(
+
+    traveler_end_age = earthframe.draw(
         axes_earth,
         x_max,
         t_max,
@@ -44,6 +48,24 @@ def _main() -> None:
         traveler_speed,
         age_step,
         margin,
+        color_traveler_first_leg,
+        color_traveler_second_leg,
+        color_earth,
+        leg_width,
+        leg_style,
+    )
+
+    travelerframe.draw(
+        axes_traveler,
+        x_max,
+        t_max,
+        t_reunion,
+        traveler_end_age,
+        traveler_speed,
+        age_step,
+        margin,
+        color_traveler_first_leg,
+        color_traveler_second_leg,
         color_earth,
         leg_width,
         leg_style,
