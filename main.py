@@ -220,6 +220,16 @@ def _draw_second_leg_explanation(
         leg_style,
     )
 
+    plotting.draw_axis(
+        axes,
+        "t''",
+        x_planet,
+        t_planet,
+        x_planet * -1.2,
+        t_planet * 1.2,
+        plotting.darken(color_traveler),
+    )
+
 
 def _draw_traveler_age(
     axes: Axes,

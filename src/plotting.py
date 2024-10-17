@@ -71,13 +71,13 @@ def draw_marker(axes, x, y, color, label: str | None = None, margin=0.0) -> None
         )
 
 
-def draw_axis(axes, label, x_start, y_start, x_end, y_end, color) -> None:
+def draw_axis(axes, label, x_start, y_start, x_offset, y_offset, color) -> None:
     # See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.arrow.html
     axes.arrow(
         x_start,
         y_start,
-        x_end,
-        y_end,
+        x_offset,
+        y_offset,
         length_includes_head=True,
         head_width=0.5,
         color=color,
@@ -87,7 +87,7 @@ def draw_axis(axes, label, x_start, y_start, x_end, y_end, color) -> None:
 
     axes.annotate(
         label,
-        xy=(x_end, y_end),
+        xy=(x_start + x_offset, y_start + y_offset),
         textcoords="offset fontsize",
         xytext=(-0.5, 0.5),
         color=color,
