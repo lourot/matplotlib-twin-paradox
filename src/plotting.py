@@ -28,16 +28,14 @@ def draw_figure(
     return axes1, axes2
 
 
-def draw_line(axes, data_x, data_y, color) -> None:
-    legwidth: Final[int] = 2
-    legstyle: Final[str] = "-"
+def draw_line(axes, data_x, data_y, color, width, style) -> None:
     axes.plot(
         data_x,
         data_y,
         # label="Earth",
         color=color,
-        linewidth=legwidth,
-        linestyle=legstyle,
+        linewidth=width,
+        linestyle=style,
     )
 
 

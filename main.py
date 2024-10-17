@@ -1,5 +1,7 @@
+from math import floor
 from typing import Any, Final
 
+from matplotlib.axes import Axes  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
 
@@ -10,8 +12,9 @@ from src import plotting
 def _main() -> None:
     x_planet: Final[float] = 10.0
     traveler_speed: Final[float] = 0.5
+    t_planet = x_planet / traveler_speed
     x_max: Final[float] = x_planet * 2.0
-    t_max: Final[float] = 2 * x_planet / traveler_speed
+    t_max: Final[float] = 2 * t_planet
 
     margin: Final[float] = 0.5
 
@@ -29,18 +32,37 @@ def _main() -> None:
     )
 
     color_traveler: Final[str] = "orange"
-    plotting.draw_line(axes_earth, earth_line_x, earth_line_t, "blue")
+    leg_width: Final[int] = 2
+    leg_style: Final[str] = "-"
     plotting.draw_line(
-        axes_earth, traveler_x_first_leg, traveler_t_first_leg, color_traveler
+        axes_earth,
+        earth_line_x,
+        earth_line_t,
+        "blue",
+        leg_width,
+        leg_style,
     )
     plotting.draw_line(
-        axes_earth, traveler_x_second_leg, traveler_t_second_leg, color_traveler
+        axes_earth,
+        traveler_x_first_leg,
+        traveler_t_first_leg,
+        color_traveler,
+        leg_width,
+        leg_style,
+    )
+    plotting.draw_line(
+        axes_earth,
+        traveler_x_second_leg,
+        traveler_t_second_leg,
+        color_traveler,
+        leg_width,
+        leg_style,
     )
 
     plotting.draw_marker(
         axes_earth,
         x_planet,
-        x_planet / traveler_speed,
+        t_planet,
         plotting.darken(color_traveler),
     )
 
@@ -59,21 +81,57 @@ def _main() -> None:
         0,
         0,
         x_planet * 1.2,
-        x_planet / traveler_speed * 1.2,
+        t_planet * 1.2,
         plotting.darken(color_traveler),
     )
 
-    ten_year_traveler_bday_x, ten_year_traveler_bday_t = (
-        maths.lorentz_transform_prime_to_reference(0, 10, traveler_speed)
+    _, traveler_age_on_planet = maths.lorentz_transform_reference_to_prime(
+        x_planet,
+        t_planet,
+        traveler_speed,
     )
-    plotting.draw_marker(
+    age_step: Final[int] = 2
+    for age in range(age_step, floor(traveler_age_on_planet), age_step):
+        _draw_traveler_age(
+            axes_earth,
+            age,
+            traveler_speed,
+            plotting.darken(color_traveler),
+        )
+    _draw_traveler_age(
         axes_earth,
-        ten_year_traveler_bday_x,
-        ten_year_traveler_bday_t,
-        "red",
+        traveler_age_on_planet,
+        traveler_speed,
+        plotting.darken(color_traveler),
     )
 
     plt.show()
+
+
+def _draw_traveler_age(axes: Axes, age: float, speed: float, color) -> None:
+    traveler_age_x, traveler_age_t = maths.lorentz_transform_prime_to_reference(
+        0,
+        age,
+        speed,
+    )
+    simultaneous_x_on_earth: Final[float] = 0.0
+    simultaneous_t_on_earth: Final[float] = traveler_age_t - traveler_age_x * speed
+    plotting.draw_line(
+        axes,
+        [traveler_age_x, simultaneous_x_on_earth],
+        [traveler_age_t, simultaneous_t_on_earth],
+        color,
+        1,
+        ":",
+    )
+
+    axes.annotate(
+        str(round(age, 1)),
+        xy=(traveler_age_x, traveler_age_t),
+        textcoords="offset fontsize",
+        xytext=(0.6, -0.4),
+        color=color,
+    )
 
 
 if __name__ == "__main__":
