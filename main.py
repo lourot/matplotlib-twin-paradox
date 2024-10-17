@@ -1,16 +1,13 @@
 import colorsys
 from typing import Any, Final
 
-import matplotlib.pyplot as plt
-from matplotlib.colors import to_rgb
+from matplotlib.axes import Axes  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
+from matplotlib.colors import to_rgb  # type: ignore
 import numpy as np
 
 
 def _main() -> None:
-    _fig, (axes_earth, axes_traveler) = plt.subplots(
-        1, 2, sharey=True, figsize=(10, 8), layout="constrained", facecolor="lightgray"
-    )
-
     x_planet: Final[float] = 10.0
     traveler_speed: Final[float] = 0.5
     x_max: Final[float] = x_planet * 2.0
@@ -18,8 +15,9 @@ def _main() -> None:
 
     margin: Final[float] = 0.5
 
-    _draw_axes(axes_earth, "Earth", x_max, t_max, margin)
-    _draw_axes(axes_traveler, "Traveler", x_max, t_max, margin, "x'", "t'")
+    axes_earth, _ = _draw_figure(
+        x_max, t_max, "Earth", "Traveler", margin, "x", "t", "x'", "t'"
+    )
 
     earth_line_x: Final[Any] = np.linspace(0, 0)
     earth_line_t: Final[Any] = np.linspace(0, t_max)
@@ -53,6 +51,27 @@ def _main() -> None:
     )
 
     plt.show()
+
+
+def _draw_figure(
+    xmax: float,
+    ymax: float,
+    title1: str,
+    title2: str,
+    margin: float,
+    xname1: str,
+    yname1: str,
+    xname2: str,
+    yname2: str,
+) -> tuple[Axes, Axes]:
+    _fig, (axes1, axes2) = plt.subplots(
+        1, 2, sharey=True, figsize=(10, 8), layout="constrained", facecolor="lightgray"
+    )
+
+    _draw_axes(axes1, title1, xmax, ymax, margin, xname1, yname1)
+    _draw_axes(axes2, title2, xmax, ymax, margin, xname2, yname2)
+
+    return axes1, axes2
 
 
 def _draw_axes(
