@@ -36,7 +36,6 @@ def _main() -> None:
         leg_style,
     )
 
-    color_first_leg: Final[str] = "orange"
     color_light: Final[str] = "green"
     _draw_first_leg_explanation(
         axes_earth,
@@ -45,23 +44,17 @@ def _main() -> None:
         x_planet,
         t_planet,
         traveler_speed,
-        color_first_leg,
         color_earth,
         color_light,
         leg_width,
         leg_style,
     )
 
-    traveler_x_second_leg: Final[Any] = np.linspace(x_planet, 0)
-    traveler_t_second_leg: Final[Any] = (
-        t_planet + (x_planet - traveler_x_second_leg) / traveler_speed
-    )
-    color_second_leg: Final[str] = "#aa00aa"
-    plotting.draw_line(
+    _draw_second_leg_explanation(
         axes_earth,
-        traveler_x_second_leg,
-        traveler_t_second_leg,
-        color_second_leg,
+        x_planet,
+        t_planet,
+        traveler_speed,
         leg_width,
         leg_style,
     )
@@ -76,7 +69,6 @@ def _draw_first_leg_explanation(
     x_planet: float,
     t_planet: float,
     traveler_speed: float,
-    color_traveler: Any,
     color_earth: Any,
     color_light: Any,
     leg_width: int,
@@ -84,6 +76,7 @@ def _draw_first_leg_explanation(
 ) -> None:
     traveler_x_first_leg: Final[Any] = np.linspace(0, x_planet)
     traveler_t_first_leg: Final[Any] = traveler_x_first_leg / traveler_speed
+    color_traveler: Final[str] = "orange"
     plotting.draw_line(
         axes,
         traveler_x_first_leg,
@@ -152,6 +145,29 @@ def _draw_first_leg_explanation(
         color_light,
         plotting.darken(color_traveler),
         plotting.darken(color_earth),
+    )
+
+
+def _draw_second_leg_explanation(
+    axes: Axes,
+    x_planet: float,
+    t_planet: float,
+    traveler_speed: float,
+    leg_width: int,
+    leg_style: str,
+) -> None:
+    traveler_x_second_leg: Final[Any] = np.linspace(x_planet, 0)
+    traveler_t_second_leg: Final[Any] = (
+        t_planet + (x_planet - traveler_x_second_leg) / traveler_speed
+    )
+    color_traveler: Final[str] = "#aa00aa"
+    plotting.draw_line(
+        axes,
+        traveler_x_second_leg,
+        traveler_t_second_leg,
+        color_traveler,
+        leg_width,
+        leg_style,
     )
 
 
