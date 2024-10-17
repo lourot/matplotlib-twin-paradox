@@ -189,14 +189,20 @@ def _draw_first_leg_explanation(
     )
 
     color_light: Final[str] = "green"
-    _draw_light_ray(
-        axes,
-        0,
-        0,
-        x_max * 1.2,
-        x_max * 1.2,
-        color_light,
+    _, traveler_age_on_planet = maths.lorentz_transform_reference_to_prime(
+        x_planet,
+        t_planet,
+        traveler_speed,
     )
+    for age in range(0, floor(traveler_age_on_planet / 2), age_step):
+        _draw_light_ray(
+            axes,
+            0,
+            age,
+            x_planet * 1.2,
+            age + x_planet * 1.2,
+            color_light,
+        )
     axes.annotate(
         "light",
         xy=(x_planet, x_planet),
@@ -205,11 +211,6 @@ def _draw_first_leg_explanation(
         color=plotting.darken(color_light),
     )
 
-    _, traveler_age_on_planet = maths.lorentz_transform_reference_to_prime(
-        x_planet,
-        t_planet,
-        traveler_speed,
-    )
     for age in range(age_step, floor(traveler_age_on_planet), age_step):
         _draw_traveler_age(
             axes,
@@ -220,7 +221,7 @@ def _draw_first_leg_explanation(
             age,
             traveler_speed,
             plotting.darken(color_traveler),
-            color_light=color_light if age <= 14 else None,
+            color_light=color_light if age < traveler_age_on_planet / 2 else None,
             annotate_simultaneity=(age == t_planet / 2),
         )
     t_end_first_leg_on_earth, simultaneity_angle_deg = _draw_traveler_age(
