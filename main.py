@@ -31,6 +31,7 @@ def _main() -> None:
         t_max / 2 + (x_planet - traveler_x_second_leg) / traveler_speed
     )
 
+    color_earth: Final[str] = "blue"
     color_traveler: Final[str] = "orange"
     leg_width: Final[int] = 2
     leg_style: Final[str] = "-"
@@ -38,7 +39,7 @@ def _main() -> None:
         axes_earth,
         earth_line_x,
         earth_line_t,
-        "blue",
+        color_earth,
         leg_width,
         leg_style,
     )
@@ -57,13 +58,6 @@ def _main() -> None:
         color_traveler,
         leg_width,
         leg_style,
-    )
-
-    plotting.draw_marker(
-        axes_earth,
-        x_planet,
-        t_planet,
-        plotting.darken(color_traveler),
     )
 
     plotting.draw_axis(
@@ -103,12 +97,21 @@ def _main() -> None:
         traveler_age_on_planet,
         traveler_speed,
         plotting.darken(color_traveler),
+        plotting.darken(color_traveler),
+        plotting.darken(color_earth),
     )
 
     plt.show()
 
 
-def _draw_traveler_age(axes: Axes, age: float, speed: float, color) -> None:
+def _draw_traveler_age(
+    axes: Axes,
+    age: float,
+    speed: float,
+    color,
+    marker_traveler_color=None,
+    marker_earth_color=None,
+) -> None:
     traveler_age_x, traveler_age_t = maths.lorentz_transform_prime_to_reference(
         0,
         age,
@@ -124,7 +127,6 @@ def _draw_traveler_age(axes: Axes, age: float, speed: float, color) -> None:
         1,
         ":",
     )
-
     axes.annotate(
         str(round(age, 1)),
         xy=(traveler_age_x, traveler_age_t),
@@ -132,6 +134,21 @@ def _draw_traveler_age(axes: Axes, age: float, speed: float, color) -> None:
         xytext=(0.6, -0.4),
         color=color,
     )
+
+    if marker_traveler_color is not None:
+        plotting.draw_marker(
+            axes,
+            traveler_age_x,
+            traveler_age_t,
+            marker_traveler_color,
+        )
+    if marker_earth_color is not None:
+        plotting.draw_marker(
+            axes,
+            simultaneous_x_on_earth,
+            simultaneous_t_on_earth,
+            marker_earth_color,
+        )
 
 
 if __name__ == "__main__":

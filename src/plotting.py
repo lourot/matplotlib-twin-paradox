@@ -95,7 +95,7 @@ def _draw_axes(
     axes, title, xmax, ymax, margin, xname="x", yname="t", xunit="ly", yunit="y"
 ) -> None:
     axes.set_title(title)
-    label_color: Final[str] = "green"
+    label_color: Final[str] = "black"
     label_fontsize: Final[int] = 14
     xlabel: Final[str] = f"{xname} [{xunit}]"
     ylabel: Final[str] = f"{yname} [{yunit}]"
