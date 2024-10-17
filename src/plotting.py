@@ -19,7 +19,7 @@ def draw_figure(
     yname2: str,
 ) -> tuple[Axes, Axes]:
     _fig, (axes1, axes2) = plt.subplots(
-        1, 2, sharey=True, figsize=(10, 8), layout="constrained", facecolor="lightgray"
+        1, 2, sharey=True, figsize=(15, 12), layout="constrained", facecolor="lightgray"
     )
 
     _draw_axes(axes1, title1, xmax, ymax, margin, xname1, yname1)
@@ -87,7 +87,7 @@ def draw_axis(axes, label, x_start, y_start, x_end, y_end, color) -> None:
 def darken(color: str):
     # See https://stackoverflow.com/questions/37765197/darken-or-lighten-a-color-in-matplotlib
     h, l, s = colorsys.rgb_to_hls(*to_rgb(color))
-    scale_l: Final[float] = 0.8
+    scale_l: Final[float] = 0.6
     return colorsys.hls_to_rgb(h, min(1, l * scale_l), s=s)
 
 
