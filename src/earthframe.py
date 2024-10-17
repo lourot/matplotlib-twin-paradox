@@ -33,6 +33,8 @@ def draw(
         x_max,
         t_max,
         t_reunion,
+        x_planet,
+        traveler_speed,
         color_earth,
         leg_width,
         leg_style,
@@ -73,6 +75,8 @@ def _draw_earth_explanation(
     x_max: float,
     t_max: float,
     t_reunion: float,
+    x_planet: float,
+    traveler_speed: float,
     color: Any,
     leg_width: int,
     leg_style: str,
@@ -97,6 +101,14 @@ def _draw_earth_explanation(
         0,
         plotting.darken(color),
     )
+    axes.annotate(
+        f"d={x_planet} ly; v={traveler_speed}",
+        xy=(x_planet, 0),
+        textcoords="offset fontsize",
+        xytext=(0, 0.5),
+        color=plotting.darken(color),
+    )
+
     plotting.draw_axis(
         axes,
         "t",
@@ -141,6 +153,31 @@ def _draw_first_leg_explanation(
         x_max * traveler_speed,
         plotting.darken(color_traveler),
     )
+    length_step: Final[int] = 2
+    for i in range(length_step, floor(x_max), length_step):
+        x_length_mark, t_length_mark = maths.lorentz_transform_prime_to_reference(
+            i,
+            0,
+            traveler_speed,
+        )
+        if x_length_mark > x_max:
+            break
+        plotting.draw_marker(
+            axes,
+            x_length_mark,
+            t_length_mark,
+            plotting.darken(color_traveler),
+            margin=margin,
+            shape="|",
+        )
+        axes.annotate(
+            str(i),
+            xy=(x_length_mark, t_length_mark),
+            textcoords="offset fontsize",
+            xytext=(0.6, -0.8),
+            color=plotting.darken(color_traveler),
+        )
+
     plotting.draw_axis(
         axes,
         "t'",
@@ -186,7 +223,7 @@ def _draw_first_leg_explanation(
             color_light=color_light if age <= 14 else None,
             annotate_simultaneity=(age == t_planet / 2),
         )
-    _draw_traveler_age(
+    t_end_first_leg_on_earth, simultaneity_angle_deg = _draw_traveler_age(
         axes,
         True,
         x_planet,
@@ -198,6 +235,22 @@ def _draw_first_leg_explanation(
         None,
         plotting.darken(color_traveler),
         plotting.darken(color_earth),
+    )
+
+    x2_earth_from_planet, _ = maths.lorentz_transform_reference_to_prime(
+        0,
+        t_end_first_leg_on_earth,
+        traveler_speed,
+    )
+    d_earth_from_planet = -x2_earth_from_planet
+    earth_speed_from_traveler = d_earth_from_planet / traveler_age_on_planet
+    axes.annotate(
+        f"d={round(d_earth_from_planet, 1)} ly; v={round(earth_speed_from_traveler, 2)}",
+        xy=(0, t_end_first_leg_on_earth),
+        textcoords="offset fontsize",
+        xytext=(1, 1),
+        color=plotting.darken(color_traveler),
+        rotation=simultaneity_angle_deg + plotting.ROTATION_CORRECTION,
     )
 
     return traveler_age_on_planet
@@ -289,7 +342,7 @@ def _draw_traveler_age(
     marker_traveler_color=None,
     marker_earth_color=None,
     annotate_simultaneity=False,
-) -> None:
+) -> tuple[float, float]:
     if first_leg:
         traveler_age_x, traveler_age_t = maths.lorentz_transform_prime_to_reference(
             0,
@@ -332,18 +385,18 @@ def _draw_traveler_age(
         xytext=(0.6, -0.4),
         color=color,
     )
+    sin_angle: Final[float] = speed
+    angle_rad: Final[float] = asin(sin_angle)
+    angle_deg: Final[float] = angle_rad * 180 / np.pi
+    cos_angle: Final[float] = cos(angle_rad)
     if annotate_simultaneity:
-        sin_angle: Final[float] = speed
-        angle_rad: Final[float] = asin(sin_angle)
-        angle_deg: Final[float] = angle_rad * 180 / np.pi
-        cos_angle: Final[float] = cos(angle_rad)
         margin_text: Final[float] = margin
         axes.text(
             traveler_age_x + cos_angle * margin_text,
             traveler_age_t + sin_angle * margin_text,
             "traveler's simultaneity",
             color=color,
-            rotation=angle_deg,
+            rotation=angle_deg + plotting.ROTATION_CORRECTION,
         )
 
     if marker_traveler_color is not None:
@@ -370,6 +423,8 @@ def _draw_traveler_age(
             traveler_age_t + traveler_age_x,
             color_light,
         )
+
+    return simultaneous_t_on_earth, angle_deg
 
 
 def _draw_light_ray(

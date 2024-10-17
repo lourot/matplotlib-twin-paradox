@@ -7,6 +7,10 @@ from matplotlib.colors import to_rgb  # type: ignore
 import numpy as np
 
 
+# NOTE(aurelien): Not sure why this leads to better results.
+ROTATION_CORRECTION = -3  # degrees
+
+
 def draw_figure() -> tuple[Axes, Axes]:
     _fig, (axes1, axes2) = plt.subplots(
         1,
@@ -61,12 +65,20 @@ def draw_line(axes, data_x, data_y, color, width, style) -> None:
     )
 
 
-def draw_marker(axes, x, y, color, label: str | None = None, margin=0.0) -> None:
+def draw_marker(
+    axes,
+    x,
+    y,
+    color,
+    label: str | None = None,
+    margin=0.0,
+    shape="s",  # square
+) -> None:
     arrow_head_size: Final[int] = 7
     axes.plot(
         [x],
         [y],
-        "s",  # square
+        shape,
         label=label,
         color=color,
         zorder=30,
