@@ -1,4 +1,4 @@
-from math import asin, cos, floor
+from math import asin, ceil, cos, floor
 from typing import Any, Final
 
 from matplotlib.axes import Axes  # type: ignore
@@ -25,7 +25,7 @@ def _main() -> None:
         x_max,
         t_max,
         "Earth frame",
-        "Traveler frame",
+        "Traveler's frame",
         margin,
         "x",
         "t",
@@ -46,6 +46,7 @@ def _main() -> None:
         leg_style,
     )
 
+    age_step: Final[int] = 2
     color_light: Final[str] = "green"
     _draw_first_leg_explanation(
         axes_earth,
@@ -54,6 +55,7 @@ def _main() -> None:
         x_planet,
         t_planet,
         traveler_speed,
+        age_step,
         color_earth,
         color_light,
         leg_width,
@@ -62,9 +64,11 @@ def _main() -> None:
 
     _draw_second_leg_explanation(
         axes_earth,
+        margin,
         x_planet,
         t_planet,
         traveler_speed,
+        age_step,
         color_earth,
         leg_width,
         leg_style,
@@ -120,6 +124,7 @@ def _draw_first_leg_explanation(
     x_planet: float,
     t_planet: float,
     traveler_speed: float,
+    age_step: int,
     color_earth: Any,
     color_light: Any,
     leg_width: int,
@@ -176,24 +181,29 @@ def _draw_first_leg_explanation(
         t_planet,
         traveler_speed,
     )
-    age_step: Final[int] = 2
     for age in range(age_step, floor(traveler_age_on_planet), age_step):
         _draw_traveler_age(
             axes,
+            True,
+            x_planet,
+            t_planet,
             margin,
             age,
             traveler_speed,
             plotting.darken(color_traveler),
-            color_light,
+            color_light=color_light if age <= 14 else None,
             annotate_simultaneity=(age == t_planet / 2),
         )
     _draw_traveler_age(
         axes,
+        True,
+        x_planet,
+        t_planet,
         margin,
         traveler_age_on_planet,
         traveler_speed,
         plotting.darken(color_traveler),
-        color_light,
+        None,
         plotting.darken(color_traveler),
         plotting.darken(color_earth),
     )
@@ -201,9 +211,11 @@ def _draw_first_leg_explanation(
 
 def _draw_second_leg_explanation(
     axes: Axes,
+    margin: float,
     x_planet: float,
     t_planet: float,
     traveler_speed: float,
+    age_step: int,
     color_earth: Any,
     leg_width: int,
     leg_style: str,
@@ -250,25 +262,66 @@ def _draw_second_leg_explanation(
         plotting.darken(color_earth),
     )
 
+    _, traveler_age_on_planet = maths.lorentz_transform_reference_to_prime(
+        x_planet,
+        t_planet,
+        traveler_speed,
+    )
+    for age in range(
+        ceil(traveler_age_on_planet), ceil(traveler_age_on_planet * 2), age_step
+    ):
+        _draw_traveler_age(
+            axes,
+            False,
+            x_planet,
+            t_planet,
+            margin,
+            age,
+            traveler_speed,
+            plotting.darken(color_traveler),
+        )
+
 
 def _draw_traveler_age(
     axes: Axes,
+    first_leg: bool,
+    x_planet: float,
+    t_planet: float,
     margin: float,
     age: float,
     speed: float,
     color,
-    color_light,
+    color_light=None,
     marker_traveler_color=None,
     marker_earth_color=None,
     annotate_simultaneity=False,
 ) -> None:
-    traveler_age_x, traveler_age_t = maths.lorentz_transform_prime_to_reference(
-        0,
-        age,
-        speed,
-    )
+    if first_leg:
+        traveler_age_x, traveler_age_t = maths.lorentz_transform_prime_to_reference(
+            0,
+            age,
+            speed,
+        )
+    else:
+        _, traveler_age_on_planet = maths.lorentz_transform_reference_to_prime(
+            x_planet,
+            t_planet,
+            speed,
+        )
+        traveler_age_x_from_planet, traveler_age_t_from_planet = (
+            maths.lorentz_transform_prime_to_reference(
+                0,
+                age - traveler_age_on_planet,
+                -speed,
+            )
+        )
+        traveler_age_x = x_planet + traveler_age_x_from_planet
+        traveler_age_t = t_planet + traveler_age_t_from_planet
+
     simultaneous_x_on_earth: Final[float] = 0.0
-    simultaneous_t_on_earth: Final[float] = traveler_age_t - traveler_age_x * speed
+    simultaneous_t_on_earth: Final[float] = traveler_age_t + traveler_age_x * speed * (
+        -1 if first_leg else 1
+    )
 
     plotting.draw_line(
         axes,
@@ -314,14 +367,15 @@ def _draw_traveler_age(
             marker_earth_color,
         )
 
-    _draw_light_ray(
-        axes,
-        traveler_age_x,
-        traveler_age_t,
-        0,
-        traveler_age_t + traveler_age_x,
-        color_light,
-    )
+    if color_light is not None:
+        _draw_light_ray(
+            axes,
+            traveler_age_x,
+            traveler_age_t,
+            0,
+            traveler_age_t + traveler_age_x,
+            color_light,
+        )
 
 
 def _draw_light_ray(
