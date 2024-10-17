@@ -11,6 +11,7 @@ from src import plotting
 
 def draw(
     axes: Axes,
+    x_min: float,
     x_max: float,
     t_max: float,
     t_reunion: float,
@@ -25,6 +26,8 @@ def draw(
     leg_width: int,
     leg_style: str,
 ) -> float:
+    plotting.draw_axes(axes, "Earth frame", x_min, x_max, t_max, margin, "x", "t")
+
     _draw_earth_explanation(
         axes,
         x_max,

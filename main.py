@@ -12,24 +12,11 @@ def _main() -> None:
     traveler_speed: Final[float] = 0.5
     t_planet: Final[float] = x_planet / traveler_speed
     t_reunion: Final[float] = 2 * t_planet
-    x_max: Final[float] = x_planet * 2.0
     t_max: Final[float] = t_reunion + 4.0
 
-    x_min: Final[float] = -2.0
     margin: Final[float] = 1.5
 
-    axes_earth, axes_traveler = plotting.draw_figure(
-        x_min,
-        x_max,
-        t_max,
-        "Earth frame",
-        "Traveler's frames",
-        margin,
-        "x",
-        "t",
-        "x'/x''",
-        "t'/t''",
-    )
+    axes_earth, axes_traveler = plotting.draw_figure()
 
     color_earth: Final[str] = "#0088ff"
     color_traveler_first_leg: Final[str] = "orange"
@@ -40,7 +27,8 @@ def _main() -> None:
 
     traveler_end_age = earthframe.draw(
         axes_earth,
-        x_max,
+        -2.0,
+        x_planet * 2.0,
         t_max,
         t_reunion,
         x_planet,
@@ -57,7 +45,8 @@ def _main() -> None:
 
     travelerframe.draw(
         axes_traveler,
-        x_max,
+        x_planet * -2.0,
+        2.0,
         t_max,
         t_reunion,
         traveler_end_age,

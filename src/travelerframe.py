@@ -11,6 +11,7 @@ from src import plotting
 
 def draw(
     axes: Axes,
+    x_min: float,
     x_max: float,
     t_max: float,
     t_reunion: float,
@@ -24,8 +25,13 @@ def draw(
     leg_width: int,
     leg_style: str,
 ) -> None:
+    plotting.draw_axes(
+        axes, "Traveler's frames", x_min, x_max, t_max, margin, "x'/x''", "t'/t''"
+    )
+
     _draw_traveler_explanation(
         axes,
+        x_min,
         x_max,
         t_max,
         traveler_end_age,
@@ -38,6 +44,7 @@ def draw(
 
 def _draw_traveler_explanation(
     axes: Axes,
+    x_min: float,
     x_max: float,
     t_max: float,
     traveler_end_age: float,
@@ -77,18 +84,18 @@ def _draw_traveler_explanation(
     plotting.draw_axis(
         axes,
         "x'",
+        x_min,
         0,
-        0,
-        x_max,
+        x_max - x_min,
         0,
         plotting.darken(color_traveler_first_leg),
     )
     plotting.draw_axis(
         axes,
         "x''",
-        0,
+        x_min,
         traveler_end_age / 2.0,
-        x_max,
+        x_max - x_min,
         0,
         plotting.darken(color_traveler_second_leg),
     )
@@ -101,3 +108,33 @@ def _draw_traveler_explanation(
         t_max,
         plotting.darken(color_traveler_second_leg),
     )
+
+
+def _draw_earth_first_part_explanation(
+    axes: Axes,
+    x_max: float,
+    margin: float,
+    x_planet: float,
+    t_planet: float,
+    traveler_speed: float,
+    age_step: int,
+    color_traveler: Any,
+    color_earth: Any,
+    leg_width: int,
+    leg_style: str,
+) -> None:
+    pass
+    # x2_earth, t2_earth = maths.lorentz_transform_prime_to_reference(
+    #     x_planet, t_planet, traveler_speed
+    # )
+
+    # x_data: Final[Any] = np.linspace(0, x_planet)
+    # t_data: Final[Any] = traveler_x_first_leg / traveler_speed
+    # plotting.draw_line(
+    #     axes,
+    #     traveler_x_first_leg,
+    #     traveler_t_first_leg,
+    #     color_traveler,
+    #     leg_width,
+    #     leg_style,
+    # )

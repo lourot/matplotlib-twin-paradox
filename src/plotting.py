@@ -7,18 +7,7 @@ from matplotlib.colors import to_rgb  # type: ignore
 import numpy as np
 
 
-def draw_figure(
-    xmin: float,
-    xmax: float,
-    ymax: float,
-    title1: str,
-    title2: str,
-    margin: float,
-    xname1: str,
-    yname1: str,
-    xname2: str,
-    yname2: str,
-) -> tuple[Axes, Axes]:
+def draw_figure() -> tuple[Axes, Axes]:
     _fig, (axes1, axes2) = plt.subplots(
         1,
         2,
@@ -28,10 +17,36 @@ def draw_figure(
         facecolor="lightgray",
     )
 
-    _draw_axes(axes1, title1, xmin, xmax, ymax, margin, xname1, yname1)
-    _draw_axes(axes2, title2, xmin, xmax, ymax, margin, xname2, yname2)
-
     return axes1, axes2
+
+
+def draw_axes(
+    axes, title, xmin, xmax, ymax, margin, xname="x", yname="t", xunit="ly", yunit="y"
+) -> None:
+    axes.set_title(title)
+    label_color: Final[str] = "black"
+    label_fontsize: Final[int] = 14
+    xlabel: Final[str] = f"{xname} [{xunit}]"
+    ylabel: Final[str] = f"{yname} [{yunit}]"
+    axes.set_xlabel(xlabel, color=label_color, fontsize=label_fontsize)
+    axes.set_ylabel(ylabel, color=label_color, fontsize=label_fontsize)
+
+    axes.set_xlim(xmin - margin, xmax + margin)
+    axes.set_ylim(-margin, ymax + margin)
+    tick_granularity: Final[float] = 2.0
+    minor_tick_granularity: Final[float] = 1.0
+    axes.set_xticks(np.arange(xmin, xmax + tick_granularity, tick_granularity))
+    axes.set_yticks(np.arange(0, ymax + tick_granularity, tick_granularity))
+    axes.set_xticks(
+        np.arange(0, xmax + minor_tick_granularity, minor_tick_granularity), minor=True
+    )
+    axes.set_yticks(
+        np.arange(0, ymax + minor_tick_granularity, minor_tick_granularity), minor=True
+    )
+    axes.set_aspect("equal")  # aspect ratio of 1:1
+
+    axes.grid()
+    # axes.legend()
 
 
 def draw_line(axes, data_x, data_y, color, width, style) -> None:
@@ -104,32 +119,3 @@ def darken(color: str):
     h, l, s = colorsys.rgb_to_hls(*to_rgb(color))
     scale_l: Final[float] = 0.6
     return colorsys.hls_to_rgb(h, min(1, l * scale_l), s=s)
-
-
-def _draw_axes(
-    axes, title, xmin, xmax, ymax, margin, xname="x", yname="t", xunit="ly", yunit="y"
-) -> None:
-    axes.set_title(title)
-    label_color: Final[str] = "black"
-    label_fontsize: Final[int] = 14
-    xlabel: Final[str] = f"{xname} [{xunit}]"
-    ylabel: Final[str] = f"{yname} [{yunit}]"
-    axes.set_xlabel(xlabel, color=label_color, fontsize=label_fontsize)
-    axes.set_ylabel(ylabel, color=label_color, fontsize=label_fontsize)
-
-    axes.set_xlim(xmin - margin, xmax + margin)
-    axes.set_ylim(-margin, ymax + margin)
-    tick_granularity: Final[float] = 2.0
-    minor_tick_granularity: Final[float] = 1.0
-    axes.set_xticks(np.arange(xmin, xmax + tick_granularity, tick_granularity))
-    axes.set_yticks(np.arange(0, ymax + tick_granularity, tick_granularity))
-    axes.set_xticks(
-        np.arange(0, xmax + minor_tick_granularity, minor_tick_granularity), minor=True
-    )
-    axes.set_yticks(
-        np.arange(0, ymax + minor_tick_granularity, minor_tick_granularity), minor=True
-    )
-    axes.set_aspect("equal")  # aspect ratio of 1:1
-
-    axes.grid()
-    # axes.legend()
