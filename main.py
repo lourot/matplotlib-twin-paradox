@@ -29,7 +29,7 @@ def _main() -> None:
         margin,
         "x",
         "t",
-        "x'",
+        "x'/x''",
         "t'/t''",
     )
 
@@ -65,6 +65,7 @@ def _main() -> None:
         x_planet,
         t_planet,
         traveler_speed,
+        color_earth,
         leg_width,
         leg_style,
     )
@@ -203,6 +204,7 @@ def _draw_second_leg_explanation(
     x_planet: float,
     t_planet: float,
     traveler_speed: float,
+    color_earth: Any,
     leg_width: int,
     leg_style: str,
 ) -> None:
@@ -220,6 +222,17 @@ def _draw_second_leg_explanation(
         leg_style,
     )
 
+    x2_axis_x_offset_after_planet: Final[float] = x_planet
+    x2_axis_t_offset_after_planet: Final[float] = x_planet * -traveler_speed
+    plotting.draw_axis(
+        axes,
+        "x''",
+        x_planet - x2_axis_x_offset_after_planet,
+        t_planet - x2_axis_t_offset_after_planet,
+        2 * x2_axis_x_offset_after_planet,
+        2 * x2_axis_t_offset_after_planet,
+        plotting.darken(color_traveler),
+    )
     plotting.draw_axis(
         axes,
         "t''",
@@ -228,6 +241,13 @@ def _draw_second_leg_explanation(
         x_planet * -1.2,
         t_planet * 1.2,
         plotting.darken(color_traveler),
+    )
+
+    plotting.draw_marker(
+        axes,
+        x_planet - x2_axis_x_offset_after_planet,
+        t_planet - x2_axis_t_offset_after_planet,
+        plotting.darken(color_earth),
     )
 
 
