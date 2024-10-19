@@ -17,6 +17,7 @@ def draw(
     t_reunion: float,
     traveler_end_age: float,
     traveler_speed: float,
+    d_earth_from_planet: float,
     age_step: int,
     margin: float,
     color_traveler_first_leg: Any,
@@ -37,6 +38,19 @@ def draw(
         traveler_end_age,
         color_traveler_first_leg,
         color_traveler_second_leg,
+        leg_width,
+        leg_style,
+    )
+
+    _draw_earth_first_part_explanation(
+        axes,
+        x_max,
+        margin,
+        traveler_end_age,
+        traveler_speed,
+        d_earth_from_planet,
+        age_step,
+        color_earth,
         leg_width,
         leg_style,
     )
@@ -114,27 +128,66 @@ def _draw_earth_first_part_explanation(
     axes: Axes,
     x_max: float,
     margin: float,
-    x_planet: float,
-    t_planet: float,
+    traveler_end_age: float,
     traveler_speed: float,
+    d_earth_from_planet: float,
     age_step: int,
-    color_traveler: Any,
     color_earth: Any,
     leg_width: int,
     leg_style: str,
 ) -> None:
-    pass
-    # x2_earth, t2_earth = maths.lorentz_transform_prime_to_reference(
-    #     x_planet, t_planet, traveler_speed
-    # )
+    earth_x_first_part: Final[Any] = np.linspace(0, -d_earth_from_planet)
+    earth_t_first_part: Final[Any] = -earth_x_first_part / traveler_speed
+    plotting.draw_line(
+        axes,
+        earth_x_first_part,
+        earth_t_first_part,
+        color_earth,
+        leg_width,
+        leg_style,
+    )
 
-    # x_data: Final[Any] = np.linspace(0, x_planet)
-    # t_data: Final[Any] = traveler_x_first_leg / traveler_speed
-    # plotting.draw_line(
-    #     axes,
-    #     traveler_x_first_leg,
-    #     traveler_t_first_leg,
-    #     color_traveler,
-    #     leg_width,
-    #     leg_style,
-    # )
+    plotting.draw_marker(
+        axes,
+        -d_earth_from_planet,
+        d_earth_from_planet / traveler_speed,
+        plotting.darken(color_earth),
+    )
+
+    plotting.draw_axis(
+        axes,
+        "t",
+        0,
+        0,
+        -d_earth_from_planet * 1.2,
+        d_earth_from_planet / traveler_speed * 1.2,
+        plotting.darken(color_earth),
+    )
+
+    _, end_age_on_earth = maths.lorentz_transform_prime_to_reference(
+        -d_earth_from_planet,
+        d_earth_from_planet / traveler_speed,
+        traveler_speed,
+    )
+
+    for age in range(age_step, floor(end_age_on_earth), age_step):
+        x1_age_mark, t1_age_mark = maths.lorentz_transform_reference_to_prime(
+            0,
+            age,
+            traveler_speed,
+        )
+        plotting.draw_marker(
+            axes,
+            x1_age_mark,
+            t1_age_mark,
+            plotting.darken(color_earth),
+            margin=margin,
+            shape="_",
+        )
+        axes.annotate(
+            str(age),
+            xy=(x1_age_mark, t1_age_mark),
+            textcoords="offset fontsize",
+            xytext=(0.8, -0.3),
+            color=plotting.darken(color_earth),
+        )

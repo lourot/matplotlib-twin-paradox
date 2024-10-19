@@ -42,7 +42,8 @@ def draw_axes(
     axes.set_xticks(np.arange(xmin, xmax + tick_granularity, tick_granularity))
     axes.set_yticks(np.arange(0, ymax + tick_granularity, tick_granularity))
     axes.set_xticks(
-        np.arange(0, xmax + minor_tick_granularity, minor_tick_granularity), minor=True
+        np.arange(xmin, xmax + minor_tick_granularity, minor_tick_granularity),
+        minor=True,
     )
     axes.set_yticks(
         np.arange(0, ymax + minor_tick_granularity, minor_tick_granularity), minor=True

@@ -25,7 +25,7 @@ def draw(
     color_earth: Any,
     leg_width: int,
     leg_style: str,
-) -> float:
+) -> tuple[float, float]:
     plotting.draw_axes(axes, "Earth frame", x_min, x_max, t_max, margin, "x", "t")
 
     _draw_earth_explanation(
@@ -40,7 +40,7 @@ def draw(
         leg_style,
     )
 
-    traveler_age_on_planet: Final[float] = _draw_first_leg_explanation(
+    traveler_age_on_planet, d_earth_from_planet = _draw_first_leg_explanation(
         axes,
         x_max,
         margin,
@@ -67,7 +67,7 @@ def draw(
         leg_style,
     )
 
-    return 2.0 * traveler_age_on_planet
+    return 2.0 * traveler_age_on_planet, d_earth_from_planet
 
 
 def _draw_earth_explanation(
@@ -132,7 +132,7 @@ def _draw_first_leg_explanation(
     color_earth: Any,
     leg_width: int,
     leg_style: str,
-) -> float:
+) -> tuple[float, float]:
     traveler_x_first_leg: Final[Any] = np.linspace(0, x_planet)
     traveler_t_first_leg: Final[Any] = traveler_x_first_leg / traveler_speed
     plotting.draw_line(
@@ -238,12 +238,12 @@ def _draw_first_leg_explanation(
         plotting.darken(color_earth),
     )
 
-    x2_earth_from_planet, _ = maths.lorentz_transform_reference_to_prime(
+    x1_earth_from_planet, _ = maths.lorentz_transform_reference_to_prime(
         0,
         t_end_first_leg_on_earth,
         traveler_speed,
     )
-    d_earth_from_planet = -x2_earth_from_planet
+    d_earth_from_planet = -x1_earth_from_planet
     earth_speed_from_traveler = d_earth_from_planet / traveler_age_on_planet
     axes.annotate(
         f"d={round(d_earth_from_planet, 1)} ly; v={round(earth_speed_from_traveler, 2)}",
@@ -254,7 +254,7 @@ def _draw_first_leg_explanation(
         rotation=simultaneity_angle_deg + plotting.ROTATION_CORRECTION,
     )
 
-    return traveler_age_on_planet
+    return traveler_age_on_planet, d_earth_from_planet
 
 
 def _draw_second_leg_explanation(

@@ -1,3 +1,4 @@
+from math import ceil
 from typing import Final
 
 import matplotlib.pyplot as plt  # type: ignore
@@ -25,7 +26,7 @@ def _main() -> None:
     leg_style: Final[str] = "-"
     age_step: Final[int] = 2
 
-    traveler_end_age = earthframe.draw(
+    traveler_end_age, d_earth_from_planet = earthframe.draw(
         axes_earth,
         -2.0,
         x_planet * 2.0,
@@ -45,12 +46,13 @@ def _main() -> None:
 
     travelerframe.draw(
         axes_traveler,
-        x_planet * -2.0,
+        x_planet * -1.0,
         2.0,
-        t_max,
+        ceil(traveler_end_age / 2.0 + 1.0) * 2,
         t_reunion,
         traveler_end_age,
         traveler_speed,
+        d_earth_from_planet,
         age_step,
         margin,
         color_traveler_first_leg,
